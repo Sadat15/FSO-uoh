@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "24984536354",
+      "number": "12345678",
       "id": 1
     },
     {
@@ -19,6 +19,26 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": 4
+    },
+    {
+      "name": "Ngolo Kante",
+      "number": "2466534",
+      "id": 5
+    },
+    {
+      "name": "Kai Havertz",
+      "number": "2676456435",
+      "id": 6
+    },
+    {
+      "name": "Testing",
+      "number": "2356243",
+      "id": 7
+    },
+    {
+      "name": "mary",
+      "number": "203423423",
+      "id": 8
     }
   ]
 }

@@ -3,12 +3,15 @@ import Filter from './Filter.jsx';
 import PersonForm from './PersonForm.jsx';
 import Persons from './Persons.jsx';
 import personService from './services/Persons.js';
+import Notification from './Notification.jsx';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filtering, setNewFiltering] = useState('');
+  const [messageContent, setMessageContent] = useState(null);
+
 
   const fetchContacts = () => {
     personService
@@ -39,6 +42,10 @@ const App = () => {
           .then(setPersons(persons.map((person) => person.id !== updatedPerson.id ? person : updatedPerson)))
         setNewName('');
         setNewNumber('');
+        setMessageContent(`Phone number for ${updatedPerson.name} was successfully updated.`);
+        setTimeout(() => {
+          setMessageContent(null)
+        }, 5000)
       }
       return;
 
@@ -50,6 +57,10 @@ const App = () => {
         setPersons(persons.concat(newPerson));
         setNewName('');
         setNewNumber('');
+        setMessageContent(`Added ${personObject.name}`);
+        setTimeout(() => {
+          setMessageContent(null)
+        }, 5000)
       })
   }
 
@@ -68,6 +79,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {messageContent === null ? <></> : <Notification message={messageContent}/>}
       <Filter filtering={filtering} handleFilteringChange={handleFilteringChange}/>
       <h2>add a new</h2>
       <PersonForm newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} addContact={addContact}/>
