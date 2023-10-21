@@ -1,9 +1,20 @@
 import personService from './services/Persons.js';
 
-const Persons = ({filtering, persons, setPersons}) => {
+const Persons = ({filtering, persons, setPersons, setMessage, setStatus}) => {
 
   const deleteContact = (id) => {
-    personService.deletePerson(id);
+    const [personToDelete] = persons.filter(person => person.id == id);
+    console.log(personToDelete);
+    personService
+      .deletePerson(id)
+      .catch(error => {
+        setStatus("error");
+        setMessage(`Information of ${personToDelete.name} has already been removed from the server`);
+        setTimeout(() => {
+          setStatus(null);
+          setMessage(null);
+        }, 5000)
+      })
     setPersons(persons.filter(person => person.id !== id));
   }
 

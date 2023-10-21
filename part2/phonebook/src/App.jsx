@@ -10,18 +10,17 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filtering, setNewFiltering] = useState('');
-  const [messageContent, setMessageContent] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [status, setStatus] = useState(null);
 
 
-  const fetchContacts = () => {
+  useEffect(() => {
     personService
       .getAll()
       .then(initialPersons => {
         setPersons(initialPersons);
       })
-  }
-
-  useEffect(fetchContacts, [])
+  }, []);
 
   const addContact = (event) => {
     event.preventDefault();
@@ -42,9 +41,11 @@ const App = () => {
           .then(setPersons(persons.map((person) => person.id !== updatedPerson.id ? person : updatedPerson)))
         setNewName('');
         setNewNumber('');
-        setMessageContent(`Phone number for ${updatedPerson.name} was successfully updated.`);
+        setStatus("success");
+        setMessage(`Phone number for ${updatedPerson.name} was successfully updated.`);
         setTimeout(() => {
-          setMessageContent(null)
+          setStatus(null);
+          setMessage(null)
         }, 5000)
       }
       return;
@@ -57,9 +58,11 @@ const App = () => {
         setPersons(persons.concat(newPerson));
         setNewName('');
         setNewNumber('');
-        setMessageContent(`Added ${personObject.name}`);
+        setStatus("success");
+        setMessage(`Added ${personObject.name}`);
         setTimeout(() => {
-          setMessageContent(null)
+          setStatus(null);
+          setMessage(null);
         }, 5000)
       })
   }
@@ -79,12 +82,12 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      {messageContent === null ? <></> : <Notification message={messageContent}/>}
+      {message === null ? <></> : <Notification message={message} status={status}/>}
       <Filter filtering={filtering} handleFilteringChange={handleFilteringChange}/>
       <h2>add a new</h2>
       <PersonForm newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} addContact={addContact}/>
       <h2>Numbers</h2>
-      <Persons filtering={filtering} persons={persons} setPersons={setPersons}/>
+      <Persons filtering={filtering} persons={persons} setPersons={setPersons} setMessage={setMessage} setStatus={setStatus}/>
     </div>
   );
 }
