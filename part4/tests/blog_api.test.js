@@ -95,6 +95,19 @@ test("verifies that a post request successfully creates a new blog post", async 
   expect(blogs.body).toHaveLength(originalBlogsLength + 1);
 }, 100000);
 
+test("verifies that if likes property is missing, will default the value to 0", async () => {
+  const newBlog = {
+    title: "Back-End & Web Development Trends For 2024",
+    author: "Kostya Stepanov",
+    url: "https://medium.com/ux-planet/back-end-web-development-trends-for-2024-04cc14bb43cb",
+  };
+  await api.post("/api/blogs", newBlog);
+  let blogs = await api.get("/api/blogs");
+  blogs = blogs.body;
+
+  expect(blogs[blogs.length - 1].likes).toEqual(0);
+}, 100000);
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
