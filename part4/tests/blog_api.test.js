@@ -88,7 +88,7 @@ test("verifies that a post request successfully creates a new blog post", async 
     likes: 147,
   };
 
-  await api.post("/api/blogs", newBlog);
+  await api.post("/api/blogs").send(newBlog).expect(201);
 
   blogs = await api.get("/api/blogs");
 
@@ -101,11 +101,25 @@ test("verifies that if likes property is missing, will default the value to 0", 
     author: "Kostya Stepanov",
     url: "https://medium.com/ux-planet/back-end-web-development-trends-for-2024-04cc14bb43cb",
   };
-  await api.post("/api/blogs", newBlog);
+  await api.post("/api/blogs").send(newBlog).expect(201);
   let blogs = await api.get("/api/blogs");
   blogs = blogs.body;
 
   expect(blogs[blogs.length - 1].likes).toEqual(0);
+}, 100000);
+
+test("verifies that if title is missing, response is a 400 bad request", async () => {
+  const newBlog = {
+    title: "",
+    author: "Fresh Frontend Links",
+    url: "https://medium.com/@frontender-ua/frontend-weekly-digest-338-20-26-november-2023-0391292f6e58",
+    likes: 52,
+  };
+  await api.post("/api/blogs").send(newBlog).expect(400);
+
+  const blogs = await api.get("/api/blogs");
+
+  expect(blogs.body).toHaveLength(initialBlogs.length);
 }, 100000);
 
 afterAll(async () => {
