@@ -122,6 +122,23 @@ test("verifies that if title is missing, response is a 400 bad request", async (
   expect(blogs.body).toHaveLength(initialBlogs.length);
 }, 100000);
 
+test("verifies that delete request works", async () => {
+  const blogsAtStart = await api.get("/api/blogs");
+  const body = blogsAtStart.body;
+
+  const blogToDelete = body[0];
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+  const blogsAtEnd = await api.get("/api/blogs");
+
+  expect(blogsAtEnd.body).toHaveLength(initialBlogs.length - 1);
+
+  const urls = blogsAtEnd.body.map((el) => el.url);
+
+  expect(urls).not.toContain(blogToDelete.url);
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
