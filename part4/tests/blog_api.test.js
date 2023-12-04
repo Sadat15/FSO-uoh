@@ -139,6 +139,27 @@ test("verifies that delete request works", async () => {
   expect(urls).not.toContain(blogToDelete.url);
 });
 
+test("Verifies that the number of likes is updated correctly", async () => {
+  const blogsAtStart = await api.get("/api/blogs");
+  const body = blogsAtStart.body;
+
+  const blogToUpdate = body[0];
+
+  const updatedBlog = {
+    title: "React patterns",
+    author: "Michael Chan",
+    url: "https://reactpatterns.com/",
+    likes: 10,
+  };
+
+  await api.put(`/api/blogs/${blogToUpdate.id}`).send(updatedBlog).expect(204);
+
+  const blogsAtEnd = await api.get("/api/blogs");
+  const bodyAtEnd = blogsAtEnd.body;
+
+  expect(bodyAtEnd[0].likes).toEqual(10);
+}, 100000);
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
