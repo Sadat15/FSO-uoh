@@ -167,16 +167,16 @@ describe("blog testing", () => {
   }, 100000);
 });
 
+beforeEach(async () => {
+  await User.deleteMany({});
+
+  const passwordHash = await bcrypt.hash("sekret", 10);
+  const user = new User({ username: "root", passwordHash });
+
+  await user.save();
+});
+
 describe("user testing", () => {
-  beforeEach(async () => {
-    await User.deleteMany({});
-
-    const passwordHash = await bcrypt.hash("sekret", 10);
-    const user = new User({ username: "root", passwordHash });
-
-    await user.save();
-  });
-
   test("verifies that user database has one user", async () => {
     const users = await api.get("/api/users");
 
@@ -201,6 +201,34 @@ describe("user testing", () => {
     const updatedUsers = await api.get("/api/users");
 
     expect(updatedUsers.body).toHaveLength(users.body.length + 1);
+  });
+
+  test("verifies that username cannot be empty", async () => {
+    const users = await api.get("/api/users");
+
+    const newUser = {
+      username: "",
+      name: "John Smith",
+      password: "test",
+    };
+
+    await api.post("/api/users").send(newUser).expect(400);
+
+    expect(users.body).toHaveLength(1);
+  });
+
+  test("verifies that password cannot be empty", async () => {
+    const users = await api.get("/api/users");
+
+    const newUser = {
+      username: "jsmith",
+      name: "John Smith",
+      password: "",
+    };
+
+    await api.post("/api/users").send(newUser).expect(400);
+
+    expect(users.body).toHaveLength(1);
   });
 });
 
